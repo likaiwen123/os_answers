@@ -77,7 +77,7 @@ SETGATE(intr, 1,2,3,0);
   - ##### [[IA-32 Intel Architecture Software Developer's Manuals](http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html)]
   选择的汇编代码段
   '''
-  switch_to:                      # switch_to(from, to)
+   switch_to:                      # switch_to(from, to)
 
     # save from's registers
     movl 4(%esp), %eax          # eax points to from
@@ -105,6 +105,7 @@ SETGATE(intr, 1,2,3,0);
 
     ret
 '''
+
 含义：前半段将各个寄存器的值压入栈，再将目标进程的需要的各个寄存器的值存入相应的各个寄存器，从而实现进程切换
 
 #### 练习二
@@ -112,6 +113,7 @@ SETGATE(intr, 1,2,3,0);
 宏定义和引用在内核代码中很常用。请枚举ucore中宏定义的用途，并举例描述其含义。
 
  > 利用宏进行复杂数据结构中的数据访问；
+ 
  '''
  #define \_\_vop_op(node, sym)                                                                         \\
     ({                                                                                              \\
@@ -124,6 +126,7 @@ SETGATE(intr, 1,2,3,0);
  使用这个宏可以实现对node的非空判断和调用其一个成员实现访问，而且访问的是一个函数指针，实现了函数调用
  
  > 利用宏进行数据类型转换；如 to_struct, 
+ 
  '''
  #define to_struct(ptr, type, member)                               \\
    ((type \*)((char \*)(ptr) - offsetof(type, member)))
@@ -131,6 +134,7 @@ SETGATE(intr, 1,2,3,0);
  从结构体的一个数据成员的地址和类型推知这个数据成员所在的结构体的地址
  
  > 常用功能的代码片段优化；如  ROUNDDOWN, SetPageDirty
+ 
  '''
  #define ROUNDDOWN(a, n) ({                                          \\
             size_t \_\_a = (size_t)(a);                               \\

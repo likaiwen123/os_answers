@@ -75,11 +75,66 @@ SETGATE(intr, 1,2,3,0);
   - ##### [*Intel 80386 Programmer's Reference Manual*, 1987](https://pdos.csail.mit.edu/6.828/2016/readings/i386/toc.htm)
 
   - ##### [[IA-32 Intel Architecture Software Developer's Manuals](http://www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html)]
+  选择的汇编代码段
+  '''
+  switch_to:                      # switch_to(from, to)
+
+    # save from's registers
+    movl 4(%esp), %eax          # eax points to from
+    popl 0(%eax)                # save eip !popl
+    movl %esp, 4(%eax)
+    movl %ebx, 8(%eax)
+    movl %ecx, 12(%eax)
+    movl %edx, 16(%eax)
+    movl %esi, 20(%eax)
+    movl %edi, 24(%eax)
+    movl %ebp, 28(%eax)
+
+    # restore to's registers
+    movl 4(%esp), %eax          # not 8(%esp): popped return address already
+                                # eax now points to to
+    movl 28(%eax), %ebp
+    movl 24(%eax), %edi
+    movl 20(%eax), %esi
+    movl 16(%eax), %edx
+    movl 12(%eax), %ecx
+    movl 8(%eax), %ebx
+    movl 4(%eax), %esp
+
+    pushl 0(%eax)               # push eip
+
+    ret
+'''
+含义：前半段将各个寄存器的值压入栈，再将目标进程的需要的各个寄存器的值存入相应的各个寄存器，从而实现进程切换
 
 #### 练习二
 
 宏定义和引用在内核代码中很常用。请枚举ucore中宏定义的用途，并举例描述其含义。
 
  > 利用宏进行复杂数据结构中的数据访问；
+ '''
+ #define \_\_vop_op(node, sym)                                                                         \\
+    ({                                                                                              \\
+        struct inode \*\_\_node = (node);                                                              \\
+        assert(\_\_node != NULL && \_\_node->in\_ops != NULL && \_\_node->in\_ops->vop\_##sym != NULL);      \\
+        inode_check(\_\_node, #sym);                                                                  \\
+        \_\_node->in\_ops->vop\_##sym;                                                                  \\
+     })
+ '''
+ 使用这个宏可以实现对node的非空判断和调用其一个成员实现访问，而且访问的是一个函数指针，实现了函数调用
+ 
  > 利用宏进行数据类型转换；如 to_struct, 
+ '''
+ #define to_struct(ptr, type, member)                               \\
+   ((type \*)((char \*)(ptr) - offsetof(type, member)))
+ '''
+ 从结构体的一个数据成员的地址和类型推知这个数据成员所在的结构体的地址
+ 
  > 常用功能的代码片段优化；如  ROUNDDOWN, SetPageDirty
+ '''
+ #define ROUNDDOWN(a, n) ({                                          \\
+            size_t \_\_a = (size_t)(a);                               \\
+            (typeof(a))(\_\_a - \_\_a % (n));                           \\
+        })
+ '''
+ 将a减小到最靠近a的一个n的倍数

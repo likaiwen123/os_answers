@@ -112,7 +112,7 @@ SETGATE(intr, 1,2,3,0);
 
 宏定义和引用在内核代码中很常用。请枚举ucore中宏定义的用途，并举例描述其含义。
 
- > 利用宏进行复杂数据结构中的数据访问；
+a.利用宏进行复杂数据结构中的数据访问；
  
  '''
  #define \_\_vop_op(node, sym)                                                                         \\
@@ -125,7 +125,7 @@ SETGATE(intr, 1,2,3,0);
  '''
  使用这个宏可以实现对node的非空判断和调用其一个成员实现访问，而且访问的是一个函数指针，实现了函数调用
  
- > 利用宏进行数据类型转换；如 to_struct, 
+b.利用宏进行数据类型转换；如 to_struct, 
  
  '''
  #define to_struct(ptr, type, member)                               \\
@@ -133,7 +133,7 @@ SETGATE(intr, 1,2,3,0);
  '''
  从结构体的一个数据成员的地址和类型推知这个数据成员所在的结构体的地址
  
- > 常用功能的代码片段优化；如  ROUNDDOWN, SetPageDirty
+c.常用功能的代码片段优化；如  ROUNDDOWN, SetPageDirty
  
  '''
  #define ROUNDDOWN(a, n) ({                                          \\

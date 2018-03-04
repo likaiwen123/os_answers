@@ -115,12 +115,12 @@ SETGATE(intr, 1,2,3,0);
 > 利用宏进行复杂数据结构中的数据访问；
  
 ```
- #define \_\_vop_op(node, sym)                                                                         \\
-    ({                                                                                              \\
-        struct inode \*\_\_node = (node);                                                              \\
-        assert(\_\_node != NULL && \_\_node->in\_ops != NULL && \_\_node->in\_ops->vop\_##sym != NULL);      \\
-        inode_check(\_\_node, #sym);                                                                  \\
-        \_\_node->in\_ops->vop\_##sym;                                                                  \\
+ #define __vop_op(node, sym)                                                                         \
+    ({                                                                                              \
+        struct inode *__node = (node);                                                              \
+        assert(__node != NULL && __node->in_ops != NULL && __node->in_ops->vop_##sym != NULL);      \
+        inode_check(__node, #sym);                                                                  \
+        __node->in_ops->vop_##sym;                                                                  \
      })
 ```
  使用这个宏可以实现对node的非空判断和调用其一个成员实现访问，而且访问的是一个函数指针，实现了函数调用
@@ -128,17 +128,17 @@ SETGATE(intr, 1,2,3,0);
 > 利用宏进行数据类型转换；如 to_struct, 
  
 ```
- #define to_struct(ptr, type, member)                               \\
-   ((type \*)((char \*)(ptr) - offsetof(type, member)))
+ #define to_struct(ptr, type, member)                               \
+   ((type *)((char *)(ptr) - offsetof(type, member)))
 ```
  从结构体的一个数据成员的地址和类型推知这个数据成员所在的结构体的地址
  
 > 常用功能的代码片段优化；如  ROUNDDOWN, SetPageDirty
  
 ```
- #define ROUNDDOWN(a, n) ({                                          \\
-            size_t \_\_a = (size_t)(a);                               \\
-            (typeof(a))(\_\_a - \_\_a % (n));                           \\
+ #define ROUNDDOWN(a, n) ({                                          \
+            size_t __a = (size_t)(a);                               \
+            (typeof(a))(__a - __a % (n));                           \
         })
 ```
  将a减小到最靠近a的一个n的倍数
